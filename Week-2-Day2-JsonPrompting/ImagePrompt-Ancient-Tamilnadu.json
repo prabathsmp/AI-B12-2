@@ -1,0 +1,91 @@
+{
+  "S": {
+    "Subject": "Epic panoramic representation of Tamilakam during the Sangam Period, approximately 300 BCE to 300 CE, portraying the Chera, Chola, and Pandya dynasties through their distinctive landscapes, people, culture, trade, warfare, and royal presence.",
+    "C": {
+      "framing": "Ultra-wide panoramic cinematic composition showing a continuous geographical and cultural journey across ancient Tamilakam",
+      "primary_visual_flow": "Chera → Western Ghats → Chola → Kaveri plains → Pandya → Southern coast",
+      "left_section": "Chera kingdom represented by the majestic Western Ghats, dense tropical forests, mountain paths, elephants, spice traders, Chera warriors, and a Chera royal figure carrying a bow emblem",
+      "center_section": "Chola kingdom represented by the fertile Kaveri plains, expansive green paddy fields, irrigation channels, river boats, prosperous agricultural settlements, Chola warriors, merchants, and a Chola royal figure associated with the tiger emblem",
+      "right_section": "Pandya kingdom represented by the southern coastline, pearl fisheries, fishing boats, maritime merchants, pearl divers, Pandya warriors, and a Pandya royal figure associated with the twin-fish emblem",
+      "transition": "The landscapes should transition seamlessly rather than appearing as separate panels: mountains gradually become fertile river plains, which gradually lead toward the southern coastal landscape",
+      "foreground": "Sangam-era Tamil people including warriors, farmers, merchants, poets, musicians, artisans, pearl divers, fishermen, women, and children engaged naturally in daily life",
+      "background": "A vast atmospheric landscape connecting mountains, forests, rivers, agricultural plains, settlements, and the southern sea into one continuous ancient Tamil civilization",
+      "camera": "Epic wide-angle cinematic perspective from a slightly elevated viewpoint, creating a grand sense of geographical scale and historical continuity",
+      "visual_hierarchy": "The eye should naturally travel from the Chera mountains on the left through the Chola Kaveri plains in the center and finally toward the Pandya southern coast on the right"
+    },
+    "A": {
+      "primary_action": "Depict the thriving life of Sangam-era Tamilakam as a continuous flow of people, commerce, agriculture, warfare, poetry, and maritime activity across the three major Tamil kingdoms",
+      "chera_action": "Chera warriors and traders move through mountain passes with elephants while merchants transport spices, forest products, and goods from the Western Ghats",
+      "chola_action": "Farmers cultivate abundant paddy fields along the Kaveri, river boats transport agricultural goods, artisans work in settlements, merchants conduct trade, and Chola warriors protect the prosperous kingdom",
+      "pandya_action": "Pearl divers work along the southern coast while fishermen operate wooden boats, maritime merchants prepare cargo for overseas trade, and Pandya warriors guard the coastal settlements",
+      "cultural_action": "Sangam poets recite Tamil poetry before royalty, musicians perform traditional instruments, artisans create pottery and ornaments, and bustling marketplaces connect the three regions",
+      "environmental_motion": "River water flows from the interior toward the plains and eventually toward the sea, visually reinforcing the continuous geographical journey"
+    },
+    "L": {
+      "setting": "Ancient Tamilakam during the Sangam Period",
+      "geographical_sequence": [
+        "Chera kingdom",
+        "Western Ghats",
+        "Chera mountain and forest region",
+        "transition toward the Kaveri basin",
+        "Chola kingdom",
+        "Kaveri river plains",
+        "fertile agricultural settlements",
+        "transition toward southern Tamilakam",
+        "Pandya kingdom",
+        "southern coastline",
+        "pearl fisheries and maritime trade"
+      ],
+      "chera_region": "Lush Western Ghats with dramatic mountains, mist-covered peaks, dense tropical forests, waterfalls, elephants, spice plants, mountain trails, and trading routes",
+      "chola_region": "Wide fertile Kaveri plains with lush paddy fields, irrigation canals, river boats, agricultural villages, bustling markets, and prosperous settlements",
+      "pandya_region": "Southern coastal landscape with sandy shores, fishing villages, pearl fisheries, wooden boats, maritime traders, sea routes, and the distant cultural presence of ancient Madurai",
+      "architecture": "Sangam-era historically inspired settlements using timber, thatch, early brick, mud, stone, woven materials, and simple fortified royal compounds",
+      "historical_context": "The three regions should feel like interconnected parts of one thriving Tamil civilization rather than isolated kingdoms"
+    },
+    "E": {
+      "style": "Epic historical cinematic realism with archaeological and ethnographic inspiration",
+      "visual_treatment": "Photorealistic historical reconstruction with cinematic environmental storytelling and exceptional geographic depth",
+      "color_progression": "Deep forest greens and misty earth tones in the Chera region, rich golden-green agricultural tones across the Chola Kaveri plains, transitioning into warm sandy earth tones and deep ocean blues along the Pandya coast",
+      "lighting": "Warm late-afternoon golden sunlight sweeping across the entire landscape, with atmospheric haze over the Western Ghats and glowing reflections across the Kaveri and southern sea",
+      "materials": "Natural-fiber garments, handwoven cotton, natural dyes, bronze ornaments, wooden boats, pottery, woven baskets, leather shields, wooden weapons, stone, mud, timber, and early brick",
+      "costume": "Historically inspired Sangam-era Tamil clothing, royal ornaments, warrior attire, farmer clothing, merchant garments, and traditional jewelry appropriate to the period",
+      "royal_symbols": "Chera bow emblem, Chola tiger emblem, and Pandya twin-fish emblem used subtly on royal banners, shields, ornaments, and insignia",
+      "mood": "Majestic, prosperous, culturally vibrant, heroic, dignified, immersive, and deeply connected to the land",
+      "historical_accuracy": "Avoid later medieval South Indian architectural forms and other anachronistic elements. The scene should feel distinctly Sangam-era rather than medieval or modern.",
+      "quality": "Ultra-detailed, photorealistic, cinematic composition, realistic human anatomy, realistic textiles and materials, volumetric lighting, atmospheric perspective, natural skin tones, extremely detailed environment, 8K cinematic quality"
+    }
+  },
+  "negative_prompt": [
+    "modern Tamil Nadu",
+    "modern India",
+    "modern buildings",
+    "modern clothing",
+    "colonial architecture",
+    "British influence",
+    "modern weapons",
+    "firearms",
+    "cars",
+    "electricity",
+    "modern roads",
+    "modern technology",
+    "medieval armor",
+    "European medieval clothing",
+    "fantasy armor",
+    "later Chola temple architecture",
+    "large medieval gopurams",
+    "modern temple architecture",
+    "anachronistic religious iconography",
+    "plastic",
+    "concrete buildings",
+    "modern ships",
+    "modern fishing boats",
+    "cartoon",
+    "anime",
+    "fantasy landscape",
+    "oversized logos",
+    "modern flags",
+    "text",
+    "captions",
+    "watermarks"
+  ]
+}

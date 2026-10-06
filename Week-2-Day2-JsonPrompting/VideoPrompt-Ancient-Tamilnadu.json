@@ -1,0 +1,246 @@
+{
+  "duration": "10 seconds",
+  "aspect_ratio": "21:9",
+  "framework": "SCALE",
+
+  "S": {
+    "Subject": "Epic cinematic depiction of Tamilakam during the Sangam Period, approximately 300 BCE to 300 CE, portraying the Chera, Chola, and Pandya realms as one continuous and prosperous ancient Tamil civilization.",
+    "VisualIdentity": {
+      "Chera": "Chera royal presence associated with the bow emblem, Western Ghats, elephants, dense forests, spices, and mountain trade",
+      "Chola": "Chola royal presence associated with the tiger emblem, Kaveri river, fertile paddy fields, agriculture, river commerce, poets, artisans, and prosperous settlements",
+      "Pandya": "Pandya royal presence associated with the twin-fish emblem, southern coastline, pearl fisheries, fishermen, maritime commerce, and coastal settlements"
+    },
+    "People": "Sangam-era Tamil kings, warriors, farmers, merchants, poets, musicians, artisans, pearl divers, fishermen, women, and children, all portrayed with authentic South Indian/Tamil appearance and historically inspired clothing."
+  },
+
+  "C": {
+    "Composition": {
+      "format": "Ultra-wide 21:9 cinematic historical panorama",
+      "visual_flow": "Chera → Western Ghats → Chola → Kaveri plains → Pandya → Southern coast",
+      "opening_frame": "Begin high above the mist-covered Western Ghats, revealing dramatic mountains, waterfalls, dense forests, elephants, spice traders, mountain paths, and a Chera royal procession.",
+      "middle_frame": "The camera continuously travels toward the Kaveri basin, where the mountains gradually transform into vast fertile paddy fields, irrigation channels, villages, river boats, markets, and Chola settlements.",
+      "ending_frame": "The camera continues toward the southern coastline, revealing pearl fisheries, fishermen, wooden sailing vessels, maritime traders, Pandya warriors, and a Pandya royal presence overlooking the sea.",
+      "continuity": "One continuous geographical landscape. No hard cuts, no separate panels, no abrupt scene changes.",
+      "camera": "Smooth cinematic aerial tracking shot with a gradual forward movement and gentle descent from the mountains toward the plains, followed by a subtle rise toward the coastline.",
+      "lens": "Wide-angle cinematic lens with deep environmental focus and natural perspective.",
+      "depth": "Strong foreground, midground, and background separation with atmospheric depth across mountains, rivers, plains, settlements, and sea.",
+      "text_safe_area": "Reserve a small unobstructed area in the upper-left corner for historical location labels.",
+      "text_coverage": "Text must occupy less than 5 percent of the frame and must never obstruct faces, royal figures, major action, or important scenery."
+    },
+
+    "TextOverlay": {
+      "style": "Elegant cinematic historical-documentary typography",
+      "position": "Upper-left corner with approximately 5 percent margin from frame edges",
+      "main_text": "Small uppercase serif lettering",
+      "sub_text": "Smaller geographic descriptor below the main title",
+      "color": "Warm ivory white",
+      "background": "Very subtle semi-transparent dark translucent panel",
+      "opacity": "Approximately 80 percent text opacity and 20–25 percent background opacity",
+      "shadow": "Very subtle shadow for readability",
+      "animation": "Gentle fade-in and fade-out synchronized with each geographical transition",
+      "segments": [
+        {
+          "time": "0.0–3.0 seconds",
+          "text": "CHERA",
+          "subtext": "Western Ghats"
+        },
+        {
+          "time": "3.0–7.0 seconds",
+          "text": "CHOLA",
+          "subtext": "Kaveri Plains"
+        },
+        {
+          "time": "7.0–10.0 seconds",
+          "text": "PANDYA",
+          "subtext": "Southern Coast"
+        }
+      ]
+    }
+  },
+
+  "A": {
+    "PrimaryAction": "A continuous cinematic journey across Sangam-era Tamilakam showing the movement of people, goods, culture, agriculture, warfare, poetry, and maritime commerce from the Western Ghats through the Kaveri plains to the southern sea.",
+
+    "Timeline": {
+      "0-3s": {
+        "visual_action": "Camera glides above the Western Ghats. Mountain mist drifts through dramatic peaks and waterfalls. Elephants carrying trade goods move along mountain paths. Chera warriors and merchants travel through the forest. A Chera royal figure appears naturally within the procession with a subtle bow emblem.",
+        "overlay": "CHERA — Western Ghats",
+        "audio": "Deep atmospheric drone, distant bamboo flute, subtle Nadaswaram phrases, low traditional percussion, mountain wind and waterfall ambience."
+      },
+
+      "3-7s": {
+        "visual_action": "Without a cut, the camera moves toward the Kaveri basin. The mountains gradually give way to expansive green paddy fields and irrigation channels. Farmers work the fields, river boats transport goods, merchants trade, artisans work, poets recite Tamil poetry, musicians perform, and Chola warriors accompany a royal procession with a subtle tiger emblem.",
+        "overlay": "CHOLA — Kaveri Plains",
+        "audio": "Music expands with Thavil, Mridangam, Nadaswaram, bamboo flute, flowing orchestral strings, and gradually increasing cinematic percussion."
+      },
+
+      "7-10s": {
+        "visual_action": "The camera continues toward the southern coastline. Agricultural plains gradually transform into coastal villages and blue sea. Pearl divers emerge from the water, fishermen operate wooden boats, maritime merchants load cargo, sailing vessels move across the sea, and a Pandya royal figure appears near the coastal settlement with a subtle twin-fish emblem.",
+        "overlay": "PANDYA — Southern Coast",
+        "audio": "Full cinematic orchestration reaches an emotional heroic climax with powerful South Indian percussion, Nadaswaram, orchestral strings, deep drums, and restrained brass. End with a majestic sustained musical resolution as the sun reflects across the sea."
+      }
+    },
+
+    "EnvironmentalMotion": [
+      "Mountain mist drifting naturally",
+      "Waterfalls flowing",
+      "Elephants walking naturally",
+      "Palm leaves moving in the breeze",
+      "Paddy fields gently swaying",
+      "Kaveri water flowing toward the coast",
+      "River boats moving naturally",
+      "Birds flying in the distance",
+      "Pearl divers surfacing",
+      "Fishing boats moving with waves",
+      "Ocean waves rolling naturally",
+      "Sailing vessels moving slowly across the sea"
+    ],
+
+    "CameraMotion": "Smooth uninterrupted cinematic forward tracking shot. Gradual transition from mountains to agricultural plains and finally to the coastline. No shaky camera, no abrupt zooms, no sudden perspective changes."
+  },
+
+  "L": {
+    "Setting": "Ancient Tamilakam during the Sangam Period.",
+
+    "GeographicalJourney": [
+      "Chera Western Ghats",
+      "Mountain forests and spice routes",
+      "Interior Tamilakam",
+      "Kaveri river basin",
+      "Chola agricultural plains",
+      "River settlements and trading towns",
+      "Southern Tamilakam",
+      "Pandya coastal settlements",
+      "Pearl fisheries",
+      "Southern sea"
+    ],
+
+    "CheraLandscape": "Majestic Western Ghats with mist-covered peaks, dense tropical forests, waterfalls, elephants, mountain trails, spice plants, and ancient trade routes.",
+
+    "CholaLandscape": "Vast fertile Kaveri plains with lush paddy fields, irrigation canals, river boats, agricultural villages, markets, artisans, and prosperous settlements.",
+
+    "PandyaLandscape": "Southern coastal environment with sandy shores, fishing villages, pearl fisheries, wooden boats, maritime traders, sailing vessels, and open sea.",
+
+    "Architecture": "Historically inspired Sangam-era settlements using timber, thatch, mud, stone, woven materials, and early brick. Avoid later medieval South Indian architectural forms.",
+
+    "HistoricalAtmosphere": "All three regions should feel like interconnected parts of one thriving Tamil civilization linked by rivers, trade routes, agriculture, poetry, warfare, craftsmanship, and maritime commerce."
+  },
+
+  "E": {
+    "Style": "Epic historical cinematic realism, photorealistic Sangam-era reconstruction, immersive period cinematography.",
+
+    "VisualQuality": "Highly detailed realistic human anatomy, authentic South Indian facial features, realistic skin and hair, physically accurate fabrics and materials, detailed landscapes, cinematic depth, volumetric atmosphere, and realistic environmental motion.",
+
+    "ColorProgression": "Deep emerald greens and misty earth tones in the Chera mountains → rich golden-green agricultural tones across the Chola Kaveri plains → warm sandy earth tones and deep ocean blues along the Pandya coast.",
+
+    "Lighting": "Continuous warm late-afternoon golden-hour sunlight with atmospheric haze over the mountains and glowing reflections across the Kaveri and southern sea.",
+
+    "Costume": "Historically inspired Sangam-era Tamil clothing using natural-fiber garments, handwoven textiles, natural dyes, bronze ornaments, traditional jewelry, royal attire, warrior clothing, farmer garments, and merchant clothing.",
+
+    "RoyalSymbols": "Use the Chera bow, Chola tiger, and Pandya twin-fish symbols subtly on historically appropriate banners, shields, ornaments, and royal insignia.",
+
+    "Mood": "Majestic, prosperous, heroic, culturally vibrant, dignified, immersive, and emotionally powerful.",
+
+    "Music": {
+      "style": "Epic South Indian cinematic orchestral score with emotional depth, melodic richness, dramatic orchestration, and the grandeur associated with large-scale Indian historical cinema.",
+      "approach": "Create an original Tamil-inspired heroic musical theme rather than copying or imitating any specific existing composition or artist.",
+      "instruments": [
+        "Nadaswaram",
+        "Thavil",
+        "Mridangam",
+        "Bamboo flute",
+        "Veena",
+        "Indian string ensemble",
+        "Cinematic orchestral strings",
+        "Deep cinematic percussion",
+        "Low brass",
+        "Atmospheric drones"
+      ],
+      "progression": "Mysterious ancient opening → steadily building heroic middle → powerful emotional climax.",
+      "vocals": "No vocals, no lyrics, no singing, no narration, no spoken dialogue.",
+      "culturalCharacter": "South Indian tonal colors, traditional Tamil percussion energy, expressive melodic phrasing, and cinematic orchestral scale.",
+      "mixing": "Music remains dominant while environmental sounds subtly reinforce each geographical transition."
+    },
+
+    "FinalFrame": "End on a majestic wide shot of the Pandya southern coastline at sunset, with sailing vessels on the sea, pearl divers and fishermen in the foreground, and golden light reflecting across the ocean."
+  },
+
+  "negative_prompt": [
+    "Western king face",
+    "European facial features",
+    "Caucasian characters",
+    "Western-looking royal faces",
+    "European king",
+    "European queen",
+    "Greek king",
+    "Roman emperor",
+    "Persian king",
+    "Mughal ruler",
+    "Middle Eastern royal costume",
+    "European medieval clothing",
+    "Western royal clothing",
+    "European armor",
+    "Roman armor",
+    "Greek armor",
+    "Western flags",
+    "European flags",
+    "British flag",
+    "Union Jack",
+    "American flag",
+    "European heraldic flags",
+    "Western national symbols",
+    "foreign royal banners",
+    "modern flags",
+    "modern Tamil Nadu",
+    "modern India",
+    "modern buildings",
+    "modern clothing",
+    "colonial architecture",
+    "British influence",
+    "modern weapons",
+    "firearms",
+    "cars",
+    "electricity",
+    "modern roads",
+    "modern technology",
+    "modern ships",
+    "modern fishing boats",
+    "later Chola temple architecture",
+    "large medieval gopurams",
+    "modern temple architecture",
+    "anachronistic religious iconography",
+    "plastic",
+    "concrete buildings",
+    "cartoon",
+    "anime",
+    "fantasy landscape",
+    "science fiction",
+    "oversized logos",
+    "watermarks",
+    "large text",
+    "giant subtitles",
+    "center-screen text",
+    "text covering faces",
+    "text covering important scenery",
+    "text obstructing main subjects",
+    "excessive text",
+    "multiple text blocks",
+    "hard scene cuts",
+    "abrupt camera movement",
+    "shaky camera",
+    "unnatural human motion",
+    "distorted faces",
+    "extra limbs",
+    "deformed hands",
+    "duplicate people",
+    "modern musical instruments",
+    "Western pop music",
+    "electronic dance music",
+    "synth-heavy soundtrack",
+    "rock music",
+    "modern vocals",
+    "lyrics",
+    "singing",
+    "spoken narration"
+  ]
+}
