@@ -1,0 +1,10 @@
+langchain
+langchain-core
+langchain-community
+langchain-huggingface
+sentence-transformers
+faiss-cpu
+numpy
+langchain-openai
+langsmith
+pypdf
