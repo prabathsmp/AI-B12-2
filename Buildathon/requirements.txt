@@ -1,0 +1,12 @@
+streamlit
+python-dotenv
+pypdf
+langchain
+langchain-community
+langchain-openai
+langchain-ollama
+langchain-huggingface
+langchain-text-splitters
+sentence-transformers
+faiss-cpu
+playwright>=1.50.0
