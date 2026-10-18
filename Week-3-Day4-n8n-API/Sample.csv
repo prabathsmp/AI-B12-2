@@ -1,0 +1,9 @@
+Topic Of Interest,Status,Email Address
+"Build an n8n automation that reads some data from a Google Sheet, structures that data into a
+clean email (a subject line and a readable message body), and sends it through Gmail to any
+email address you choose. The workflow should pull the data, format it into an email, and deliver it
+end to end without you writing the email by hand.",Pending,prabathsmp@gmail.com
+"Build an n8n automation that reads some data from a Google Sheet, structures that data into a
+clean email (a subject line and a readable message body), and sends it through Gmail to any
+email address you choose. The workflow should pull the data, format it into an email, and deliver it
+end to end without you writing the email by hand.",Sent,prabathsmp@gmail.com

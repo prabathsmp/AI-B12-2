@@ -1,0 +1,145 @@
+{
+  "name": "GoogleSheet-EmailSend",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1ff78966-1d83-4049-b7be-4e23aae2cbc8",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1QOPLGrUoKSnZxWHqVaIpkPnJdhHND6a9TO8wPBChGnU",
+          "mode": "list",
+          "cachedResultName": "Sample",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QOPLGrUoKSnZxWHqVaIpkPnJdhHND6a9TO8wPBChGnU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QOPLGrUoKSnZxWHqVaIpkPnJdhHND6a9TO8wPBChGnU/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "=Pending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "id": "b97db122-7243-4a36-831d-e5c6a83d3150",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GKDosFOMM25B9ZPK",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => {\n  return {\n    json: {\n      toEmail: item.json[\"Email Address\"],\n      subject: \"Update for the Day\",\n      body: item.json[\"Topic Of Interest\"]\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "d543abcf-44c1-49af-92f3-7875e3d1130e",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.toEmail }}",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.body }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        0
+      ],
+      "id": "80641f35-efd1-4600-81ee-3e81d93d82aa",
+      "name": "Send a message",
+      "webhookId": "25bf432c-b101-4ad8-9b39-ef23baabe372",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "5UYhT9UgrCkstmX9",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "862c7d91-4238-4154-838e-67eba941df0b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dec9a797d46737d2a63b802937bb1b7da4d2e863d8d036825ee53b90220839ee"
+  },
+  "nodeGroups": [],
+  "id": "OEMd0U5FgZqsvnhf",
+  "tags": []
+}

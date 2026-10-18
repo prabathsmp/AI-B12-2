@@ -1,0 +1,926 @@
+{
+  "name": "Student-Cleanser",
+  "nodes": [
+    {
+      "parameters": {
+        "binaryPropertyName": "csv_file",
+        "options": {
+          "delimiter": ",",
+          "headerRow": true
+        }
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        80
+      ],
+      "id": "261af466-3704-4ed8-9532-ce4dbd7eda02",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "formTitle": "Student Data Cleansing",
+        "formDescription": "Upload a student enrollment CSV file for data cleansing.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Upload CSV File",
+              "fieldType": "file",
+              "fieldName": "csv_file",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        80
+      ],
+      "id": "66670b33-8618-4f89-ae5d-678ffdf208ef",
+      "name": "CSV Upload",
+      "webhookId": "5ab1740d-6a1d-40aa-bc33-be446938ee31"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a data normalization assistant for student enrollment records.\n\nYour task is to normalize the supplied student record without inventing missing information.\n\nRules:\n\n1. Trim leading and trailing whitespace from all string fields.\n2. Normalize Name to title case while preserving the person's name as accurately as possible.\n3. Convert e-mail addresses to lowercase and trim whitespace.\n4. Normalize Course names by trimming whitespace and using consistent title case.\n5. Normalize City by trimming whitespace and using consistent title case.\n6. Normalize Status to one of these values when the meaning is unambiguous:\n\n   * Enrolled\n   * Active\n   * Pending\n   * In Progress\n   * Completed\n   * Cancelled\n   * On Hold\n     If the value is unclear or misspelled, retain the cleaned original value rather than guessing.\n7. Normalize Fee_Paid to one of:\n\n   * Yes\n   * No\n   * Partial\n   * Unknown\n     Map obvious equivalents such as YES, true, 1, and Paid to Yes. Map 0 and false to No. Map partially paid to Partial. Use Unknown for blank or ambiguous values.\n8. Do not invent missing email addresses, phone numbers, or enrollment dates.\n9. Do not correct invalid dates by guessing.\n10. Preserve Phone as a string to avoid losing leading zeros or formatting information.\n11. Return exactly one JSON object for the supplied record.\n12. Do not include Markdown, explanations, or code fences.\n\nReturn these fields:\nName, e-mail, Course, Status, Fee_Paid, Phone, City, enrolled date.\n\nInput student record:\n{{ JSON.stringify($json) }}\n",
+        "hasOutputParser": true,
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        448,
+        80
+      ],
+      "id": "ca2208ee-ca7e-44cb-9b81-0bf010500373",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        464,
+        320
+      ],
+      "id": "6051ea0b-e6a2-4ec7-a2b9-8e42385b1bfe",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "FuGT7MUQ0UVAEpX7",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"Name\": \"John Smith\",\n  \"e-mail\": \"john.smith@gmail.com\",\n  \"Course\": \"Python\",\n  \"Status\": \"Enrolled\",\n  \"Fee_Paid\": \"Yes\",\n  \"Phone\": \"9876543210\",\n  \"City\": \"Chennai\",\n  \"enrolled date\": \"2026-01-12\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        592,
+        320
+      ],
+      "id": "c59ae8cc-0843-4e43-a17b-92a795e0d249",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        800,
+        80
+      ],
+      "id": "d15f98e1-cbc5-4477-8f2d-e1ae825e348e",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const record = $json.output ?? $json;\n\n// Safely trim string fields\nfunction cleanString(value) {\n  return value == null ? '' : String(value).trim();\n}\n\n// Normalize name and general text fields\nfunction toTitleCase(value) {\n  return cleanString(value)\n    .toLowerCase()\n    .replace(/\\b[a-z]/g, char => char.toUpperCase());\n}\n\nconst name = toTitleCase(record.Name);\nconst email = cleanString(record['e-mail']).toLowerCase();\nconst course = toTitleCase(record.Course);\nconst city = toTitleCase(record.City);\n\nlet status = cleanString(record.Status).toLowerCase();\n\nconst statusMap = {\n  'enrolled': 'Enrolled',\n  'active': 'Active',\n  'pending': 'Pending',\n  'in progress': 'In Progress',\n  'completed': 'Completed',\n  'cancelled': 'Cancelled',\n  'canceled': 'Cancelled',\n  'on hold': 'On Hold'\n};\n\nstatus = statusMap[status] || toTitleCase(status);\n\nlet fee = cleanString(record.Fee_Paid).toLowerCase();\n\nconst feeMap = {\n  'yes': 'Yes',\n  'y': 'Yes',\n  'true': 'Yes',\n  '1': 'Yes',\n  'paid': 'Yes',\n  'no': 'No',\n  'n': 'No',\n  'false': 'No',\n  '0': 'No',\n  'partial': 'Partial',\n  'partially paid': 'Partial',\n  'unknown': 'Unknown',\n  'n/a': 'Unknown',\n  '': 'Unknown'\n};\n\nfee = feeMap[fee] || 'Unknown';\n\n// Preserve phone numbers as strings\nconst phone = cleanString(record.Phone);\n\n// Normalize dates only when their format is unambiguous\nfunction normalizeDate(value) {\n  const date = cleanString(value);\n\n  if (!date) return '';\n\n  // Already ISO formatted: validate the actual calendar date\n  let match = date.match(/^(\\d{4})-(\\d{2})-(\\d{2})$/);\n\n  if (match) {\n    const [, year, month, day] = match;\n    const d = new Date(`${year}-${month}-${day}T00:00:00Z`);\n\n    if (\n      d.getUTCFullYear() === Number(year) &&\n      d.getUTCMonth() + 1 === Number(month) &&\n      d.getUTCDate() === Number(day)\n    ) {\n      return date;\n    }\n\n    return '';\n  }\n\n  // Formats such as 03/02/2026 are ambiguous.\n  // Do not guess whether they mean DD/MM/YYYY or MM/DD/YYYY.\n  return '';\n}\n\nconst enrolledDate = normalizeDate(record['enrolled date']);\n\n// Validate email syntax; this is not proof that the address exists.\nconst emailValid =\n  /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email);\n\n// Basic phone validation: 10 digits, optionally with India's +91 prefix.\nconst phoneDigits = phone.replace(/\\D/g, '');\n\nconst phoneValid =\n  /^\\+?[\\d\\s()-]+$/.test(phone) &&\n  (phoneDigits.length === 10 ||\n   (phone.startsWith('+91') && phoneDigits.length === 12));\n\nconst missingFields = [];\n\nif (!name) missingFields.push('Name');\nif (!email) missingFields.push('e-mail');\nif (!course) missingFields.push('Course');\nif (!city) missingFields.push('City');\nif (!enrolledDate) missingFields.push('enrolled date');\n\nconst validationErrors = [];\n\nif (email && !emailValid) {\n  validationErrors.push('Invalid email');\n}\n\nif (!phoneValid) {\n  validationErrors.push('Invalid phone');\n}\n\nif (!statusMap[cleanString(record.Status).toLowerCase()]) {\n  validationErrors.push('Unrecognized status');\n}\n\nif (!feeMap[cleanString(record.Fee_Paid).toLowerCase()]) {\n  validationErrors.push('Unrecognized fee value');\n}\n\nreturn {\n  json: {\n    Name: name,\n    'e-mail': email,\n    Course: course,\n    Status: status,\n    Fee_Paid: fee,\n    Phone: phone,\n    City: city,\n    'enrolled date': enrolledDate,\n    email_valid: emailValid,\n    phone_valid: phoneValid,\n    missing_fields: missingFields,\n    validation_errors: validationErrors\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        128
+      ],
+      "id": "0ae8f9a9-d765-4ab0-b211-d3918463a32e",
+      "name": "Transformation cleansing"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nconst seenEmails = new Set();\nconst seenRecords = new Set();\n\nconst uniqueRecords = [];\n\nfor (const item of items) {\n  const record = item.json;\n\n  const email = String(record['e-mail'] || '')\n    .trim()\n    .toLowerCase();\n\n  const name = String(record.Name || '')\n    .trim()\n    .toLowerCase();\n\n  const course = String(record.Course || '')\n    .trim()\n    .toLowerCase();\n\n  const phone = String(record.Phone || '')\n    .replace(/\\D/g, '');\n\n  const enrolledDate = String(record['enrolled date'] || '')\n    .trim();\n\n  // Prefer email as the primary identifier.\n  // Only use email for deduplication when it is present.\n  if (email) {\n    if (seenEmails.has(email)) {\n      continue;\n    }\n\n    seenEmails.add(email);\n  } else {\n    // For missing emails, require multiple matching fields.\n    const fallbackKey = [\n      name,\n      course,\n      phone,\n      enrolledDate\n    ].join('|');\n\n    if (\n      name &&\n      course &&\n      phone &&\n      enrolledDate &&\n      seenRecords.has(fallbackKey)\n    ) {\n      continue;\n    }\n\n    if (name && course && phone && enrolledDate) {\n      seenRecords.add(fallbackKey);\n    }\n  }\n\n  uniqueRecords.push(item);\n}\n\nreturn uniqueRecords;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        -64
+      ],
+      "id": "b55c44c0-2954-4506-b875-30ac70f1276c",
+      "name": "De-Duplication cleansing"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "09296341-696f-4452-ab43-3388fa19fa48",
+              "leftValue": "={{ $json.missing_fields.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "9ff9c773-fba6-4ed0-892c-8225d9c6f38b",
+              "leftValue": "={{ $json.validation_errors.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1248,
+        -64
+      ],
+      "id": "b34275ad-2b5c-4183-a313-dea01d4e3c4b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "binaryPropertyName": "valid_list_students.xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1456,
+        -176
+      ],
+      "id": "ceb3600b-d5be-4a3b-a6d5-e1b4c04269eb",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "binaryPropertyName": "invalid_list_students.xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1472,
+        32
+      ],
+      "id": "ad73017c-b6ce-4dd9-b6f7-4be294849b28",
+      "name": "Convert to File1"
+    }
+  ],
+  "pinData": {
+    "Extract from File": [
+      {
+        "json": {
+          "Name": "John Smith ",
+          "e-mail": "john.smith@gmail.com ",
+          "Course": "Python",
+          "Status": "Enrolled",
+          "Fee_Paid": "Yes",
+          "Phone": "9876543210",
+          "City": "Chennai",
+          "enrolled date": "2026-01-12"
+        }
+      },
+      {
+        "json": {
+          "Name": "john smith",
+          "e-mail": "JOHN.SMITH@gmail.com",
+          "Course": " python ",
+          "Status": "enrolled ",
+          "Fee_Paid": "YES",
+          "Phone": "98765 43210",
+          "City": "chennai ",
+          "enrolled date": "12/01/2026"
+        }
+      },
+      {
+        "json": {
+          "Name": "Priya Kumar",
+          "Course": "Data Science",
+          "Status": "Active",
+          "Fee_Paid": "No",
+          "Phone": "9840012345",
+          "City": "Coimbatore",
+          "enrolled date": "2026-02-03"
+        }
+      },
+      {
+        "json": {
+          "Name": "Arun Raj",
+          "e-mail": "arun.raj@example.com",
+          "Course": "Java",
+          "Status": "Pending",
+          "Fee_Paid": "Partial",
+          "Phone": "+91-98765-12345",
+          "City": "Madurai",
+          "enrolled date": "03-02-2026"
+        }
+      },
+      {
+        "json": {
+          "Name": "Meena Devi  ",
+          "e-mail": "meena.devi@example.com",
+          "Course": "Cloud Computing",
+          "Status": "ENROLLED",
+          "Fee_Paid": "true",
+          "Phone": " 9000011111 ",
+          "City": "TIRUCHIRAPPALLI",
+          "enrolled date": "Feb 5, 2026"
+        }
+      },
+      {
+        "json": {
+          "Name": "Karthik S",
+          "e-mail": "karthik.s@example.com",
+          "Course": "Python",
+          "Status": "Cancelled",
+          "Fee_Paid": "No",
+          "Phone": "90000-22222",
+          "City": "Salem",
+          "enrolled date": "2026/02/07"
+        }
+      },
+      {
+        "json": {
+          "Name": "Divya R",
+          "e-mail": "divya.r@example.com",
+          "Course": "UI/UX Design",
+          "Status": "active",
+          "Fee_Paid": "1",
+          "Phone": "9444412345",
+          "City": "Chennai",
+          "enrolled date": "07-Feb-2026"
+        }
+      },
+      {
+        "json": {
+          "Name": "Suresh Babu",
+          "e-mail": "suresh.babu@example.com",
+          "Course": "Data Science",
+          "Status": "In Progress",
+          "Fee_Paid": "Paid",
+          "City": "Erode",
+          "enrolled date": "2026-02-10"
+        }
+      },
+      {
+        "json": {
+          "Name": "Anitha",
+          "e-mail": "anitha.example.com",
+          "Course": "Java",
+          "Status": "Enrolled",
+          "Fee_Paid": "Yes",
+          "Phone": "9799912345",
+          "City": "Vellore",
+          "enrolled date": "2026-02-11"
+        }
+      },
+      {
+        "json": {
+          "Name": "Ravi Chandran",
+          "e-mail": "ravi.c@example.com",
+          "Course": "Cloud Computing",
+          "Status": "pending",
+          "Fee_Paid": "0",
+          "Phone": "97999 12346",
+          "City": "vellore",
+          "enrolled date": "11/02/26"
+        }
+      },
+      {
+        "json": {
+          "Name": "Lakshmi P",
+          "e-mail": "lakshmi.p@example.com",
+          "Course": "Python",
+          "Status": "Enrolled",
+          "Fee_Paid": "Yes",
+          "Phone": "8123456789",
+          "City": "Thanjavur",
+          "enrolled date": "2026-02-14"
+        }
+      },
+      {
+        "json": {
+          "Name": "Mohammed Iqbal",
+          "e-mail": "iqbal@example.com",
+          "Course": "Cyber Security",
+          "Status": "Active",
+          "Fee_Paid": "No",
+          "Phone": "81234 56789",
+          "City": "Chennai"
+        }
+      },
+      {
+        "json": {
+          "Name": "Nisha Thomas",
+          "e-mail": "nisha.thomas@example.com",
+          "Course": "Data Science",
+          "Status": "Enrolled",
+          "Fee_Paid": "Yes",
+          "Phone": "044-23456789",
+          "City": "Pondicherry",
+          "enrolled date": "2026-02-18"
+        }
+      },
+      {
+        "json": {
+          "Name": "Vijay Kumar",
+          "e-mail": "vijay.kumar@example.com",
+          "Course": "Python",
+          "Status": "Enrolled",
+          "Fee_Paid": "Y",
+          "Phone": "987654321",
+          "City": "Tirunelveli",
+          "enrolled date": "2026-02-19"
+        }
+      },
+      {
+        "json": {
+          "Name": "Asha N",
+          "e-mail": "asha.n@example.com ",
+          "Course": "java ",
+          "Status": "Completed",
+          "Fee_Paid": "TRUE",
+          "Phone": "9876543210",
+          "City": "Chennai",
+          "enrolled date": "2026-02-20"
+        }
+      },
+      {
+        "json": {
+          "Name": "Priya Kumar",
+          "Course": "Data Science",
+          "Status": "Active",
+          "Fee_Paid": "No",
+          "Phone": "9840012345",
+          "City": "Coimbatore",
+          "enrolled date": "2026-02-03"
+        }
+      },
+      {
+        "json": {
+          "Name": "Bala Murugan",
+          "e-mail": "bala.murugan@example.com",
+          "Course": "Digital Marketing",
+          "Status": "enrolled",
+          "Fee_Paid": "Partially Paid",
+          "Phone": "  ",
+          "City": "  Hosur",
+          "enrolled date": "20/02/2026"
+        }
+      },
+      {
+        "json": {
+          "Name": "Sneha Patel",
+          "e-mail": "sneha.patel@example.com",
+          "Course": "UI/UX Design",
+          "Status": "On Hold",
+          "Fee_Paid": "N/A",
+          "Phone": "90000 33333",
+          "City": "Bengaluru",
+          "enrolled date": "2026-02-22"
+        }
+      },
+      {
+        "json": {
+          "Name": "Ganesh T",
+          "e-mail": "ganesh.t@example.com",
+          "Course": "Cyber Security",
+          "Status": "ENROLLED ",
+          "Fee_Paid": "Yes ",
+          "Phone": "9000033333",
+          "City": "Chennai ",
+          "enrolled date": "2026-13-02"
+        }
+      },
+      {
+        "json": {
+          "Name": "R. Prakash",
+          "e-mail": "prakash@example.com",
+          "Course": "Data Science",
+          "Status": "enrolld",
+          "Fee_Paid": "No",
+          "Phone": "abc12345",
+          "City": "Ooty",
+          "enrolled date": "not available"
+        }
+      }
+    ],
+    "Basic LLM Chain": [
+      {
+        "json": {
+          "output": {
+            "Name": "John Smith",
+            "e-mail": "john.smith@gmail.com",
+            "Course": "Python",
+            "Status": "Enrolled",
+            "Fee_Paid": "Yes",
+            "Phone": "9876543210",
+            "City": "Chennai",
+            "enrolled date": "2026-01-12"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "Name": "John Smith",
+            "e-mail": "john.smith@gmail.com",
+            "Course": "Python",
+            "Status": "Enrolled",
+            "Fee_Paid": "Yes",
+            "Phone": "98765 43210",
+            "City": "Chennai",
+            "enrolled date": "12/01/2026"
+          }
+        },
+        "pairedItem": {
+          "item": 1
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "Name": "Priya Kumar",
+            "e-mail": "",
+            "Course": "Data Science",
+            "Status": "Active",
+            "Fee_Paid": "No",
+            "Phone": "9840012345",
+            "City": "Coimbatore",
+            "enrolled date": "2026-02-03"
+          }
+        },
+        "pairedItem": {
+          "item": 2
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "Name": "Arun Raj",
+            "e-mail": "arun.raj@example.com",
+            "Course": "Java",
+            "Status": "Pending",
+            "Fee_Paid": "Partial",
+            "Phone": "+91-98765-12345",
+            "City": "Madurai",
+            "enrolled date": "03-02-2026"
+          }
+        },
+        "pairedItem": {
+          "item": 3
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "Name": "Meena Devi",
+            "e-mail": "meena.devi@example.com",
+            "Course": "Cloud Computing",
+            "Status": "Enrolled",
+            "Fee_Paid": "Yes",
+            "Phone": "9000011111",
+            "City": "Tiruchirappalli",
+            "enrolled date": "Feb 5, 2026"
+          }
+        },
+        "pairedItem": {
+          "item": 4
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "Name": "Karthik S",
+            "e-mail": "karthik.s@example.com",
+            "Course": "Python",
+            "Status": "Cancelled",
+            "Fee_Paid": "No",
+            "Phone": "90000-22222",
+            "City": "Salem",
+            "enrolled date": "2026/02/07"
+          }
+        },
+        "pairedItem": {
+          "item": 5
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "Name": "Divya R",
+            "e-mail": "divya.r@example.com",
+            "Course": "UI/UX Design",
+            "Status": "Active",
+            "Fee_Paid": "Yes",
+            "Phone": "9444412345",
+            "City": "Chennai",
+            "enrolled date": "07-Feb-2026"
+          }
+        },
+        "pairedItem": {
+          "item": 6
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "Name": "Suresh Babu",
+            "e-mail": "suresh.babu@example.com",
+            "Course": "Data Science",
+            "Status": "In Progress",
+            "Fee_Paid": "Yes",
+            "Phone": "",
+            "City": "Erode",
+            "enrolled date": "2026-02-10"
+          }
+        },
+        "pairedItem": {
+          "item": 7
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "Name": "Anitha",
+            "e-mail": "anitha.example.com",
+            "Course": "Java",
+            "Status": "Enrolled",
+            "Fee_Paid": "Yes",
+            "Phone": "9799912345",
+            "City": "Vellore",
+            "enrolled date": "2026-02-11"
+          }
+        },
+        "pairedItem": {
+          "item": 8
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "Name": "Ravi Chandran",
+            "e-mail": "ravi.c@example.com",
+            "Course": "Cloud Computing",
+            "Status": "Pending",
+            "Fee_Paid": "No",
+            "Phone": "97999 12346",
+            "City": "Vellore",
+            "enrolled date": "11/02/26"
+          }
+        },
+        "pairedItem": {
+          "item": 9
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "Name": "Lakshmi P",
+            "e-mail": "lakshmi.p@example.com",
+            "Course": "Python",
+            "Status": "Enrolled",
+            "Fee_Paid": "Yes",
+            "Phone": "8123456789",
+            "City": "Thanjavur",
+            "enrolled date": "2026-02-14"
+          }
+        },
+        "pairedItem": {
+          "item": 10
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "Name": "Mohammed Iqbal",
+            "e-mail": "iqbal@example.com",
+            "Course": "Cyber Security",
+            "Status": "Active",
+            "Fee_Paid": "No",
+            "Phone": "81234 56789",
+            "City": "Chennai",
+            "enrolled date": ""
+          }
+        },
+        "pairedItem": {
+          "item": 11
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "Name": "Nisha Thomas",
+            "e-mail": "nisha.thomas@example.com",
+            "Course": "Data Science",
+            "Status": "Enrolled",
+            "Fee_Paid": "Yes",
+            "Phone": "044-23456789",
+            "City": "Pondicherry",
+            "enrolled date": "2026-02-18"
+          }
+        },
+        "pairedItem": {
+          "item": 12
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "Name": "Vijay Kumar",
+            "e-mail": "vijay.kumar@example.com",
+            "Course": "Python",
+            "Status": "Enrolled",
+            "Fee_Paid": "Yes",
+            "Phone": "987654321",
+            "City": "Tirunelveli",
+            "enrolled date": "2026-02-19"
+          }
+        },
+        "pairedItem": {
+          "item": 13
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "Name": "Asha N",
+            "e-mail": "asha.n@example.com",
+            "Course": "Java",
+            "Status": "Completed",
+            "Fee_Paid": "Yes",
+            "Phone": "9876543210",
+            "City": "Chennai",
+            "enrolled date": "2026-02-20"
+          }
+        },
+        "pairedItem": {
+          "item": 14
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "Name": "Priya Kumar",
+            "e-mail": "",
+            "Course": "Data Science",
+            "Status": "Active",
+            "Fee_Paid": "No",
+            "Phone": "9840012345",
+            "City": "Coimbatore",
+            "enrolled date": "2026-02-03"
+          }
+        },
+        "pairedItem": {
+          "item": 15
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "Name": "Bala Murugan",
+            "e-mail": "bala.murugan@example.com",
+            "Course": "Digital Marketing",
+            "Status": "Enrolled",
+            "Fee_Paid": "Partial",
+            "Phone": "",
+            "City": "Hosur",
+            "enrolled date": "20/02/2026"
+          }
+        },
+        "pairedItem": {
+          "item": 16
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "Name": "Sneha Patel",
+            "e-mail": "sneha.patel@example.com",
+            "Course": "UI/UX Design",
+            "Status": "On Hold",
+            "Fee_Paid": "Unknown",
+            "Phone": "90000 33333",
+            "City": "Bengaluru",
+            "enrolled date": "2026-02-22"
+          }
+        },
+        "pairedItem": {
+          "item": 17
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "Name": "Ganesh T",
+            "e-mail": "ganesh.t@example.com",
+            "Course": "Cyber Security",
+            "Status": "Enrolled",
+            "Fee_Paid": "Yes",
+            "Phone": "9000033333",
+            "City": "Chennai",
+            "enrolled date": "2026-13-02"
+          }
+        },
+        "pairedItem": {
+          "item": 18
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "Name": "R. Prakash",
+            "e-mail": "prakash@example.com",
+            "Course": "Data Science",
+            "Status": "enrolld",
+            "Fee_Paid": "No",
+            "Phone": "abc12345",
+            "City": "Ooty",
+            "enrolled date": "not available"
+          }
+        },
+        "pairedItem": {
+          "item": 19
+        }
+      }
+    ]
+  },
+  "connections": {
+    "CSV Upload": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "De-Duplication cleansing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Transformation cleansing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transformation cleansing": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "De-Duplication cleansing": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "e7d828d3-55c7-4104-b834-c975cba5636a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dec9a797d46737d2a63b802937bb1b7da4d2e863d8d036825ee53b90220839ee"
+  },
+  "nodeGroups": [],
+  "id": "s9OU7wIfuq0C5BUq",
+  "tags": []
+}
