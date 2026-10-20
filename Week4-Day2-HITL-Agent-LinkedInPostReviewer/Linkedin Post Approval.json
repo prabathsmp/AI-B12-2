@@ -1,0 +1,421 @@
+{
+  "name": "Linkedin Post Approval",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Topic ",
+        "formDescription": "Describe the Topic",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Topic"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        -96
+      ],
+      "id": "6d885a33-531d-486d-839c-e9c2a74a17da",
+      "name": "On form submission",
+      "webhookId": "58fa6199-2eec-4880-9d46-573bf7b35cea"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        232,
+        136
+      ],
+      "id": "158e6d06-dbff-4260-ae28-efea338319b8",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "FuGT7MUQ0UVAEpX7",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=agent1"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        360,
+        136
+      ],
+      "id": "4acca080-2326-40b4-8bbf-1ea9790dd015",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write a LinkedIn post about: {{ $json.Topic }}\nHook in line one, 120-150 words, one call to action,\nmax 3 hashtags. Return the post only.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        -96
+      ],
+      "id": "6753303f-0b77-44a1-a86b-94e9ff1b1d34",
+      "name": "Writer Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a professional LinkedIn content reviewer.\n\nReview the following LinkedIn post.\n\nEvaluate it on:\n1. Hook and ability to capture attention\n2. Clarity and readability\n3. Professional tone\n4. Relevance to the topic\n5. Strength of the call to action\n\nScore the post out of 10 on hook, clarity, and call to action.\n\nImprove the weakest areas while preserving the original meaning.\n\nRequirements:\n- Keep the final post between 120 and 150 words.\n- Include no more than 3 relevant hashtags.\n- Return only the improved LinkedIn post.\n- Do not include scores, feedback, headings, or explanations.\n\nOriginal LinkedIn post:\n{{ $json.output }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        576,
+        -96
+      ],
+      "id": "d074c0e1-6b53-45b6-ad72-11c45ef872ee",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        584,
+        136
+      ],
+      "id": "37b397b3-ee79-414e-9eba-e037f6ad0429",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "FuGT7MUQ0UVAEpX7",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "agent2",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        712,
+        136
+      ],
+      "id": "77b7ed84-5a40-4a68-ae1a-775f5f796059",
+      "name": "Simple Memory2"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "prabathsmp@gmail.com",
+        "subject": "LinkedIn Post Approval Required",
+        "message": "={{ $json.output }}",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {
+          "limitWaitTime": {
+            "values": {
+              "resumeUnit": "days"
+            }
+          },
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        928,
+        -96
+      ],
+      "id": "4e11c7c5-af8b-4854-83fe-61e7c1ca298e",
+      "name": "Send message and wait for response",
+      "webhookId": "06e5c276-6246-4976-8a1f-0a9517668f38",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "5UYhT9UgrCkstmX9",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f2b64190-e06b-4149-8020-bc403dfe77b4",
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1152,
+        -96
+      ],
+      "id": "fed24942-9f99-4581-8150-6d3ef32e6167",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1mKyQgoJdz-bqwvCvFeoBJ9K4llyuJe6oubFov5jfEuk",
+          "mode": "list",
+          "cachedResultName": "LinkedInPost",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mKyQgoJdz-bqwvCvFeoBJ9K4llyuJe6oubFov5jfEuk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mKyQgoJdz-bqwvCvFeoBJ9K4llyuJe6oubFov5jfEuk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date ": "={{ $now.toFormat('yyyy-MM-dd HH:mm:ss') }}",
+            "Topic": "={{ $('On form submission').item.json.Topic }}",
+            "Final Post": "={{ $('AI Agent').item.json.output }}",
+            "Status": "Approved"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date ",
+              "displayName": "Date ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Final Post",
+              "displayName": "Final Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1376,
+        -96
+      ],
+      "id": "de7bf3c8-3da2-4bd8-98b0-3e6f078a066d",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GKDosFOMM25B9ZPK",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "HITL can also be implemented with output node, not necessarily be AI Agent tool/ tool calling"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        992,
+        96
+      ],
+      "typeVersion": 1,
+      "id": "be427a83-4ec4-46b9-ab45-73f23920b336",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Writer Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Writer Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Writer Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Writer Agent": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory2": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send message and wait for response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "341b7d7c-15af-45f8-94b8-441dafa76608",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dec9a797d46737d2a63b802937bb1b7da4d2e863d8d036825ee53b90220839ee"
+  },
+  "nodeGroups": [],
+  "id": "O0HAayBJBu4j9lGi",
+  "tags": []
+}

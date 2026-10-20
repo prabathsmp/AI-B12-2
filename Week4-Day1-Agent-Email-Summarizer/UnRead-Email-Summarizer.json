@@ -1,0 +1,257 @@
+{
+  "name": "UnRead-Email-Summarizer",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -32
+      ],
+      "id": "e913789b-de0a-4748-9754-e2c37c615c54",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 5,
+        "filters": {
+          "readStatus": "unread"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        -32
+      ],
+      "id": "5abb22bc-bfc8-4b11-95d2-73d688fd09b2",
+      "name": "Get many messages",
+      "webhookId": "dd3cf86f-35c5-4413-981b-5d52ba4091db",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "5UYhT9UgrCkstmX9",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write ONE line (20 words maximum) describing this email.\nNo greeting, no heading, no extra text.\nFrom: {{ $json.from }}    Subject: {{ $json.subject }}\nPreview: {{ $json.snippet }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        448,
+        -32
+      ],
+      "id": "b6b98de1-902d-4496-a1ca-c0743990bed1",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        520,
+        200
+      ],
+      "id": "e04878fe-a1e6-4c43-9513-2c82d0ad9667",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "FuGT7MUQ0UVAEpX7",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "prabathsmp@gmail.com",
+        "subject": "Unread Email Summary",
+        "message": "={{ $json.output.map(text => `<p>${text}</p>`).join('') }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "SMP-Bot"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1360,
+        -32
+      ],
+      "id": "a7c483d2-8bb5-4a88-85be-2ac2913838cb",
+      "name": "Send a message",
+      "webhookId": "7c6228d2-3783-46e9-9a7d-0164335aa888",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "5UYhT9UgrCkstmX9",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "output"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        -32
+      ],
+      "id": "08bd7cf3-abf8-4bb0-a86a-46d8bef01c6c",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        816,
+        -32
+      ],
+      "id": "33c98338-e31f-4572-b3cf-ab31af315736",
+      "name": "Loop Over Items"
+    }
+  ],
+  "pinData": {
+    "AI Agent": [
+      {
+        "json": {
+          "output": "Promote Fixed Deposit to help customers save effectively for important goals like a dream car or exotic holiday."
+        }
+      },
+      {
+        "json": {
+          "output": "October 2026 credit score update from BankBazaar with a free report verification link."
+        }
+      },
+      {
+        "json": {
+          "output": "Notification of recent Google account sign-in to serpapi.com using the email prabathsmp@gmail.com on October 20."
+        }
+      },
+      {
+        "json": {
+          "output": "Claim your ₹50 cashback voucher on your recent order instantly via CRED Pay; no physical voucher needed."
+        }
+      },
+      {
+        "json": {
+          "output": "Promotional email offering up to 7.5% cashback on purchases from Flipkart, Myntra, Swiggy, and more."
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get many messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many messages": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "aec5f581-7898-4713-bca5-19d9f13652ca",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dec9a797d46737d2a63b802937bb1b7da4d2e863d8d036825ee53b90220839ee"
+  },
+  "nodeGroups": [],
+  "id": "4BjnAya0nLCoQyTL",
+  "tags": []
+}
