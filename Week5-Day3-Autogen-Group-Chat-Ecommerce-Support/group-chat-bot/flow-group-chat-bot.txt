@@ -1,0 +1,13 @@
+User Query: "Where is my order #88492?"
+   │
+   ▼
+[Selector GroupChat Manager] ───> Routes to: Order_Billing_Specialist
+   │
+   ▼
+[Order_Billing_Specialist]
+   ├── Proposes Tool Call: lookup_order_status("88492")
+   ├── Executes Tool Call directly in runtime (No Customer_Proxy involved)
+   └── Generates final reply: "Order #88492 is in transit via FedEx... TERMINATE"
+   │
+   ▼
+[Customer_Proxy] ───> Detects 'TERMINATE' ───> Exits cleanly to Streamlit
