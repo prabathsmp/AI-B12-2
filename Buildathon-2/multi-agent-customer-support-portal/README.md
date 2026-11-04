@@ -15,7 +15,7 @@ An enterprise-ready, autonomous customer support and incident routing system pow
 2. **Gamified Operator Console**:
    - Live HUD tracking Resolution Rate %, Escalation Counts, and Operator Support XP.
    - Dynamic Rank Progression from *Bronze Scout* to *Diamond Commander*.
-   - Section 8 Benchmark Test Suite with one-click evaluation preloading.
+   - 8 Benchmark Test Suite with one-click evaluation preloading.
    - Integrated Admin Portal with real-time Knowledge Base re-indexing and CSV log exports.
 
 ---
@@ -190,9 +190,9 @@ streamlit run app.py
 
 ---
 
-## 🧪 Benchmark Testing (Section 8)
+## 🧪 Benchmark Testing
 
-The application comes pre-loaded with the standard Section 8 benchmark queries covering:
+The application comes pre-loaded with the standard 8 benchmark queries covering:
 - Regular policy retrieval (Shipping delays, 30-day return windows, Warranty coverage)
 - Account self-service workflows (Password reset procedures)
 - Guardrail escalations (Angry sentiment, 3x billing dispute charges, explicit legal threats)
