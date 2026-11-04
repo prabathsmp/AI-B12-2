@@ -1,0 +1,18 @@
+services:
+  ai-support-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: customer-support-app
+    restart: unless-stopped
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    volumes:
+      # Mount logs so tickets.csv persists across rebuilds and container restarts
+      - ./logs:/app/logs
+      # Mount knowledge base so adding .md policies doesn't require image rebuild
+      - ./knowledge_base:/app/knowledge_base
+      # Persist vector index across container rebuilds.
+      - ./faiss_index:/app/faiss_index
