@@ -1,0 +1,21 @@
+﻿services:
+  datapilot:
+    build: .
+    image: datapilot:1.0
+    container_name: datapilot
+    ports:
+      - "${DATAPILOT_PORT:-8503}:8501"
+    environment:
+      - DATAPILOT_EXEC_TIMEOUT=90
+    volumes:
+      - datapilot_workspaces:/app/workspaces
+    # Resource limits keep runaway AI-generated code in check
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2g
+    restart: unless-stopped
+
+volumes:
+  datapilot_workspaces:
