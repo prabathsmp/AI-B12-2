@@ -76,6 +76,22 @@ uvicorn app.main:app --reload --port 8000
 cd frontend && npm install && npm run dev     # http://localhost:5173 (proxies /api → :8000)
 ```
 
+## 🌐 Deploy to a VPS with HTTPS (host nginx + Let's Encrypt)
+
+The VPS needs Ubuntu, DNS `A` record → VPS IP, and nginx on the host (installed if missing).
+```bash
+cd /path/to/SlotEase
+bash deploy/deploy.sh slotease.example.com you@example.com
+```
+`deploy.sh` will:
+- Install Docker if it's missing.
+- Create `.env` with random secrets.
+- Start `docker-compose.prod.yml`, with the app listening only on `127.0.0.1` and no public database or API ports.
+- Add an nginx site for the domain.
+- Get an HTTPS certificate with `certbot --nginx --redirect`.
+
+It is safe to re-run after a `git pull`.
+
 ## ✅ Verify the "Done checklist"
 
 ```bash

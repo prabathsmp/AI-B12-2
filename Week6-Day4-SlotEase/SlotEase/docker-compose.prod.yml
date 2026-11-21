@@ -1,0 +1,44 @@
+# Production stack for a VPS that already runs nginx on the host.
+# Only the frontend is published, and only on 127.0.0.1, so the host nginx
+# (with Let's Encrypt HTTPS) is the single public entry point.
+#   docker compose -f docker-compose.prod.yml up -d --build
+name: slotease
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-slotease}
+      POSTGRES_USER: ${POSTGRES_USER:-slotease}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-slotease} -d ${POSTGRES_DB:-slotease}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-slotease}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-slotease}
+    depends_on:
+      db:
+        condition: service_healthy
+    # no published port: reachable only via the frontend's /api proxy
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-8085}:80"
+
+volumes:
+  pgdata:

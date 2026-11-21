@@ -40,6 +40,14 @@ docker build -t datapilot:1.0 .
 docker run --rm -p 8503:8501 datapilot:1.0
 ```
 
+## Deploy to a VPS with HTTPS
+
+```bash
+cd /root/AI-B12-2/Week6-Day3-DataPilot/Pilot && git pull
+BASIC_AUTH_USER=admin sudo -E bash deploy/deploy_vps.sh
+```
+Nginx + Let's Encrypt in front of the container, which is bound to `127.0.0.1` only. Details: [deploy/README-deploy.md](deploy/README-deploy.md).
+
 ## Run locally (without Docker)
 
 ```bash
