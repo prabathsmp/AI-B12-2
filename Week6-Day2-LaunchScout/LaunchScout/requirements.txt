@@ -1,0 +1,6 @@
+crewai[tools]==1.15.44
+streamlit==1.67.0
+python-dotenv>=1.0
+ddgs==9.16.1
+markdown==3.11.3
+xhtml2pdf==0.2.28

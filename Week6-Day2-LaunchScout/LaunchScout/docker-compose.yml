@@ -1,0 +1,15 @@
+services:
+  launchscout:
+    build: .
+    image: launchscout:latest
+    container_name: launchscout
+    ports:
+      - "8501:8501"
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - ./outputs:/app/outputs
+    environment:
+      - TZ=${TZ:-Asia/Kolkata}
+    restart: unless-stopped
