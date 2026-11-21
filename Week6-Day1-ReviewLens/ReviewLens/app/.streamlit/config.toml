@@ -1,0 +1,19 @@
+[server]
+headless = true
+maxUploadSize = 20
+enableXsrfProtection = true
+
+[client]
+toolbarMode = "minimal"
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+base = "light"
+primaryColor = "#4f46e5"
+backgroundColor = "#f6f7fd"
+secondaryBackgroundColor = "#eef0fb"
+textColor = "#1e1b4b"
+linkColor = "#4f46e5"
+font = "Inter, system-ui, sans-serif"

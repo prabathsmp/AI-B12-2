@@ -1,0 +1,30 @@
+name: reviewlens
+
+services:
+  reviewlens:
+    build: .
+    image: reviewlens:latest
+    container_name: reviewlens
+    restart: unless-stopped
+    # OPENAI_API_KEY etc. come from .env (optional - the key can also be pasted in the app sidebar)
+    env_file:
+      - path: .env
+        required: false
+    ports:
+      # Local: http://localhost:8501   |   VPS behind a reverse proxy: set BIND_ADDR=127.0.0.1
+      - "${BIND_ADDR:-0.0.0.0}:${APP_PORT:-8501}:8501"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
